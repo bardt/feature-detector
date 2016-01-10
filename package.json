@@ -1,0 +1,25 @@
+{
+  "name": "feature-detector",
+  "version": "1.0.0",
+  "description": "An experiment to gather browser features support and store the statistics",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": "4.2.4",
+    "npm": "2.14.12"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bardt/feature-detector.git"
+  },
+  "author": "Roman Salnikov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bardt/feature-detector/issues"
+  },
+  "homepage": "https://github.com/bardt/feature-detector#readme"
+}
