@@ -94,12 +94,31 @@ function getFeatures() {
   return features;
 }
 
+function sendStats(features) {
+  var data = {
+    apiKey: 'demo',
+    features: features
+  };
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '/stats', true);
+  xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+
+  // send the collected data as JSON
+  xhr.send(JSON.stringify(data));
+
+  xhr.onloadend = function () {
+    console.info('Done sending stats');
+  };
+}
+
 docReady(function () {
   var features = getFeatures();
   console.log(features);
   var sorted = features.sort(function(a, b) {
     return !!a.enabled - !!b.enabled;
   });
+  sendStats(features);
   for (var i = 0; i < sorted.length; i++) {
     showFeatureInUI(sorted[i]);
   }

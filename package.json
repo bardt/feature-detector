@@ -4,8 +4,10 @@
   "description": "An experiment to gather browser features support and store the statistics",
   "main": "index.js",
   "dependencies": {
+    "body-parser": "^1.14.2",
     "ejs": "^2.3.4",
-    "express": "^4.13.3"
+    "express": "^4.13.3",
+    "mongodb": "^2.1.4"
   },
   "devDependencies": {},
   "engines": {
