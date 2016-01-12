@@ -5,6 +5,8 @@ const app = express();
 app.set('port', (process.env.PORT || 5000));
 app.set('view engine', 'ejs')
 
+app.use(express.static('public'));
+
 app.get('/', (req, res) => {
   res.render('demo', function(err, html) {
     res.send(html);
