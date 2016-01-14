@@ -1,9 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const MongoClient = require('mongodb').MongoClient;
 
 const app = express();
 
 app.set('port', (process.env.PORT || 5000));
+app.set('mongoConnectionString', process.env.MONGOLAB_URI);
 app.set('view engine', 'ejs')
 
 app.use(bodyParser.json());
@@ -16,9 +18,9 @@ app.get('/', (req, res) => {
 });
 
 app.post('/stats', (req, res) => {
-  console.log('Request approved');
-  console.log(req.body);
-  res.sendStatus(200);
+  MongoClient.connect(app.get('mongoConnectionString'), function(err, db) {
+    db.close();
+  });
 });
 
 app.listen(app.get('port'), () => {
