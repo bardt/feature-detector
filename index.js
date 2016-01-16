@@ -17,6 +17,39 @@ app.get('/', (req, res) => {
   });
 });
 
+app.get('/stats', (req, res) => {
+  const collection = req.db.collection('statistics');
+  collection.mapReduce(
+    function() {
+      Object.keys(this.features).forEach((key, index) => {
+        if (typeof this.features[key] === 'boolean') {
+          emit(key, this.features[key]);
+        }
+      });
+    },
+    function(key, values) {
+      return values.filter(value => !!value).length / value.length;
+    },
+    {
+      query: { apiKey: 'demo' },
+      out: 'stats_totals'
+    },
+    (err, collecton) => {
+      if (err) {
+        return res.sendStatus(500);
+      }
+
+      collection.find({ stats_totals: true }, (err, result) => {
+        console.log(result);
+        if (err) {
+          return res.sendStatus(500);
+        }
+        res.sendStatus(200);
+      });
+    }
+  );
+});
+
 app.post('/stats', (req, res) => {
   const collection = req.db.collection('statistics');
   const newRecord = Object.assign({}, req.body, {
