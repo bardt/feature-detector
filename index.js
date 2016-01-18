@@ -21,12 +21,24 @@ app.get('/stats', (req, res) => {
   const collection = req.db.collection('statistics');
   collection.mapReduce(
     function() {
-      Object.keys(this.features).forEach((key) => {
-        emit(key, !!this.features[key]);
+      this.features.forEach((feature) => {
+        emit(feature.name, { enabled: feature.enabled ? 1 : 0, total: 1 });
       });
     },
     function(key, values) {
-      return values.filter(value => !!value).length / values.length;
+      /*
+        Each value is of format
+        {
+          enabled: 14,
+          total: 52
+        }
+       */
+      return values.reduce((acc, value, index) => {
+        return {
+          enabled: acc.enabled + value.enabled,
+          total: acc.total + value.total
+        };
+      }, { enabled: 0, total: 0 });
     },
     {
       query: { apiKey: 'demo' },
@@ -38,8 +50,9 @@ app.get('/stats', (req, res) => {
         return res.sendStatus(500);
       }
 
-      console.log(stats);
-      res.sendStatus(200);
+      res.status(200).send(stats.map(statsItem => Object.assign({}, statsItem.value, {
+        feature: statsItem._id,
+      })));
     }
   );
 });
