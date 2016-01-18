@@ -15,7 +15,16 @@ function getStats(db, apiKey, callback) {
 
   function mapper() {
     this.features.forEach(function(feature) {
-      emit(feature.name, { enabled: feature.enabled ? 1 : 0, total: 1 });
+      if (typeof feature.enabled === 'boolean') {
+        // Simple
+        emit(feature.name, { enabled: feature.enabled ? 1 : 0, total: 1 });
+      } else {
+        // Composite
+        Object.keys(feature.enabled).forEach(function(subFeature) {
+          const enabled = feature.enabled[subFeature];
+          emit(feature.name + '.' + subFeature, { enabled: enabled ? 1 : 0, total: 1 });
+        });
+      }
     });
   }
 
