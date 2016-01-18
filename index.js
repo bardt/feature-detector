@@ -14,7 +14,7 @@ app.use(expressMongoDb(process.env.MONGOLAB_URI || 'mongodb://localhost:27017/')
 function getStats(db, apiKey, callback) {
 
   function mapper() {
-    this.features.forEach((feature) => {
+    this.features.forEach(function(feature) {
       emit(feature.name, { enabled: feature.enabled ? 1 : 0, total: 1 });
     });
   }
@@ -27,7 +27,7 @@ function getStats(db, apiKey, callback) {
         total: 52
       }
      */
-    return values.reduce((acc, value, index) => {
+    return values.reduce(function(acc, value, index) {
       return {
         enabled: acc.enabled + value.enabled,
         total: acc.total + value.total
@@ -84,6 +84,7 @@ app.get('/', (req, res) => {
 app.get('/stats', (req, res) => {
   getStats(req.db, 'demo', (err, stats) => {
     if (err) {
+      console.log(err);
       return res.sendStatus(500);
     }
 
