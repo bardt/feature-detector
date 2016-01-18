@@ -68,13 +68,6 @@
     }
 })("docReady", window);
 
-function showFeatureInUI(feature) {
-  var list = document.getElementById('list');
-  var newLI = document.createElement('li');
-  newLI.appendChild(document.createTextNode(feature.name + ' ' + JSON.stringify(feature.enabled)));
-  list.appendChild(newLI);
-}
-
 function getFeatures() {
   var features = [];
   if (typeof Modernizr !== 'undefined') {
@@ -113,13 +106,5 @@ function sendStats(features) {
 }
 
 docReady(function () {
-  var features = getFeatures();
-  console.log(features);
-  var sorted = features.sort(function(a, b) {
-    return !!a.enabled - !!b.enabled;
-  });
-  sendStats(features);
-  for (var i = 0; i < sorted.length; i++) {
-    showFeatureInUI(sorted[i]);
-  }
+  sendStats(getFeatures());
 });

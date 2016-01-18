@@ -11,50 +11,84 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 app.use(expressMongoDb(process.env.MONGOLAB_URI || 'mongodb://localhost:27017/'));
 
+function getStats(db, apiKey, callback) {
+
+  function mapper() {
+    this.features.forEach((feature) => {
+      emit(feature.name, { enabled: feature.enabled ? 1 : 0, total: 1 });
+    });
+  }
+
+  function reducer(key, values) {
+    /*
+      Each value is of format
+      {
+        enabled: 14,
+        total: 52
+      }
+     */
+    return values.reduce((acc, value, index) => {
+      return {
+        enabled: acc.enabled + value.enabled,
+        total: acc.total + value.total
+      };
+    }, { enabled: 0, total: 0 });
+  }
+
+  const collection = db.collection('statistics');
+  collection.mapReduce(mapper, reducer, {
+      query: { apiKey: apiKey },
+      out: { inline: 1 }
+    }, (err, stats) => {
+      if (err) {
+        return callback(err, []);
+      }
+
+      const out = stats.map(statsItem => Object.assign({}, statsItem.value, {
+        feature: statsItem._id,
+      }));
+      callback(err, out);
+    }
+  );
+}
+
 app.get('/', (req, res) => {
-  res.render('demo', function(err, html) {
-    res.send(html);
+  getStats(req.db, 'demo', (err, stats) => {
+    if (err) {
+      return res.sendStatus(500);
+    }
+
+    function countPercentage(statObject) {
+      const enabled = statObject.enabled;
+      const total = statObject.total;
+      return Math.floor(enabled / total * 1000) / 10;
+    }
+
+    function addPercentage(statObject) {
+      return Object.assign({}, statObject, {
+        percentage: countPercentage(statObject)
+      });
+    };
+
+    const statsView = stats
+      .filter(statItem => !!statItem.total)
+      .map(addPercentage);
+
+    res.render('demo', { stats: statsView }, function(err, html) {
+      res.send(html);
+    });
   });
+
 });
 
 app.get('/stats', (req, res) => {
-  const collection = req.db.collection('statistics');
-  collection.mapReduce(
-    function() {
-      this.features.forEach((feature) => {
-        emit(feature.name, { enabled: feature.enabled ? 1 : 0, total: 1 });
-      });
-    },
-    function(key, values) {
-      /*
-        Each value is of format
-        {
-          enabled: 14,
-          total: 52
-        }
-       */
-      return values.reduce((acc, value, index) => {
-        return {
-          enabled: acc.enabled + value.enabled,
-          total: acc.total + value.total
-        };
-      }, { enabled: 0, total: 0 });
-    },
-    {
-      query: { apiKey: 'demo' },
-      verbose: true,
-      out: { inline: 1 }
-    },
-    (err, stats) => {
-      if (err) {
-        return res.sendStatus(500);
-      }
-
-      res.status(200).send(stats.map(statsItem => Object.assign({}, statsItem.value, {
-        feature: statsItem._id,
-      })));
+  getStats(req.db, 'demo', (err, stats) => {
+    if (err) {
+      return res.sendStatus(500);
     }
-  );
+
+    res.status(200).send(stats);
+  });
 });
 
 app.post('/stats', (req, res) => {

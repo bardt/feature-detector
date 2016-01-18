@@ -7,7 +7,13 @@
     <script src="/detector/detector.js" charset="utf-8"></script>
   </head>
   <body>
-    <ul id="list">
-    </ul>
+    <table>
+      <% stats.forEach(function(statItem) { %>
+        <tr>
+          <td><%= statItem.feature %></td>
+          <td><%= statItem.percentage %>%</td>
+        </tr>
+      <% }); %>
+    <table>
   </body>
 </html>
