@@ -46,19 +46,18 @@ function getStats(db, apiKey, callback) {
 
   const collection = db.collection('statistics');
   collection.mapReduce(mapper, reducer, {
-      query: { apiKey: apiKey },
-      out: { inline: 1 }
-    }, (err, stats) => {
-      if (err) {
-        return callback(err, []);
-      }
-
-      const out = stats.map(statsItem => Object.assign({}, statsItem.value, {
-        feature: statsItem._id,
-      }));
-      callback(err, out);
+    query: { apiKey: apiKey },
+    out: { inline: 1 }
+  }, (err, stats) => {
+    if (err) {
+      return callback(err, []);
     }
-  );
+
+    const out = stats.map(statsItem => Object.assign({}, statsItem.value, {
+      feature: statsItem._id,
+    }));
+    callback(err, out);
+  });
 }
 
 app.get('/', (req, res) => {
