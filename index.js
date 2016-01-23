@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const expressMongoDb = require('express-mongo-db');
+const useragent = require('express-useragent');
 
 const app = express();
 
@@ -9,6 +10,7 @@ app.set('view engine', 'ejs');
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
+app.use(useragent.express());
 app.use(expressMongoDb(process.env.MONGOLAB_URI || 'mongodb://localhost:27017/'));
 
 function getStats(db, apiKey, callback) {
@@ -103,7 +105,9 @@ app.get('/stats', (req, res) => {
 app.post('/stats', (req, res) => {
   const collection = req.db.collection('statistics');
   const newRecord = Object.assign({}, req.body, {
-    timestamp: new Date().getTime()
+    timestamp: new Date().getTime(),
+    // More info about browser (from express-useragent)
+    browser: req.useragent
   });
   collection.insert(newRecord, (err, result) => {
     if (err) {

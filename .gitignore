@@ -4,6 +4,9 @@
 # Atom
 .tags
 
+# Mongo
+data
+
 # Logs
 logs
 *.log
