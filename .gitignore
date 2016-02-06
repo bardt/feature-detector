@@ -7,6 +7,10 @@
 # Mongo
 data
 
+# Elm
+elm-stuff
+elm.js
+
 # Logs
 logs
 *.log
