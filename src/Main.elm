@@ -1,7 +1,6 @@
 module Main (..) where
 
-import Html exposing (div, button, text)
-import Html.Events exposing (onClick)
+import Html exposing (div, table, tbody, tr, td, text)
 import StartApp.Simple as StartApp
 
 
@@ -13,28 +12,53 @@ main =
         }
 
 
+demoStats =
+    [ { feature = "service workers"
+      , percentage = 61.4
+      }
+    ]
+
+
 model =
-    0
+    { stats = demoStats }
+
+
+appendRight str1 str2 =
+    str2 ++ str1
+
+
+percentageText percentage =
+    percentage
+        |> toString
+        |> appendRight "%"
+        |> text
+
+
+statsTableItem statsItem =
+    tr
+        []
+        [ td
+            []
+            [ text statsItem.feature ]
+        , td
+            []
+            [ percentageText statsItem.percentage ]
+        ]
+
+
+statsTable stats =
+    table
+        []
+        [ tbody [] (List.map statsTableItem stats)
+        ]
 
 
 view address model =
     div
         []
-        [ button [ onClick address Decrement ] [ text "-" ]
-        , div [] [ text (toString model) ]
-        , button [ onClick address Increment ] [ text "+" ]
+        [ statsTable model.stats
         ]
 
 
-type Action
-    = Increment
-    | Decrement
-
-
-update action model =
-    case action of
-        Increment ->
-            model + 1
-
-        Decrement ->
-            model - 1
+update _ model =
+    model
