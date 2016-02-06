@@ -2,8 +2,10 @@ module Main (..) where
 
 import Html exposing (div, table, tbody, tr, td, text)
 import StartApp.Simple as StartApp
+import Signal exposing (Address)
 
 
+main : Signal Html.Html
 main =
     StartApp.start
         { model = model
@@ -12,6 +14,19 @@ main =
         }
 
 
+type alias StatsItem =
+    { feature : String, percentage : Float }
+
+
+type alias Stats =
+    List StatsItem
+
+
+type alias Model =
+    { stats : Stats }
+
+
+demoStats : List StatsItem
 demoStats =
     [ { feature = "service workers"
       , percentage = 61.4
@@ -19,14 +34,17 @@ demoStats =
     ]
 
 
+model : Model
 model =
     { stats = demoStats }
 
 
+appendRight : String -> String -> String
 appendRight str1 str2 =
     str2 ++ str1
 
 
+percentageText : Float -> Html.Html
 percentageText percentage =
     percentage
         |> toString
@@ -34,6 +52,7 @@ percentageText percentage =
         |> text
 
 
+statsTableItem : StatsItem -> Html.Html
 statsTableItem statsItem =
     tr
         []
@@ -46,6 +65,7 @@ statsTableItem statsItem =
         ]
 
 
+statsTable : Stats -> Html.Html
 statsTable stats =
     table
         []
@@ -53,6 +73,11 @@ statsTable stats =
         ]
 
 
+type Action
+    = Action
+
+
+view : Address Action -> Model -> Html.Html
 view address model =
     div
         []
@@ -60,5 +85,6 @@ view address model =
         ]
 
 
+update : Action -> Model -> Model
 update _ model =
     model
