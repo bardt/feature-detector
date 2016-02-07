@@ -9,6 +9,9 @@ import Task exposing (..)
 import Effects exposing (Effects, Never)
 
 
+-- APP
+
+
 init : ( Model, Effects Action )
 init =
     ( model, fetchStats )
@@ -34,6 +37,18 @@ main =
     app.html
 
 
+
+-- MODEL
+
+
+type alias Model =
+    { stats : Stats }
+
+
+type alias Stats =
+    List StatsItem
+
+
 type alias StatsItem =
     { feature : String
     , enabled : Int
@@ -41,26 +56,9 @@ type alias StatsItem =
     }
 
 
-type alias Stats =
-    List StatsItem
-
-
-type alias Model =
-    { stats : Stats }
-
-
-demoStats : List StatsItem
-demoStats =
-    [ { feature = "service workers"
-      , enabled = 61
-      , total = 105
-      }
-    ]
-
-
 model : Model
 model =
-    { stats = demoStats }
+    { stats = [] }
 
 
 appendRight : String -> String -> String
@@ -68,21 +66,33 @@ appendRight str1 str2 =
     str2 ++ str1
 
 
-percentageText : Float -> Html.Html
-percentageText percentage =
-    percentage
-        |> toString
-        |> appendRight "%"
-        |> text
-
-
 countPercentage : StatsItem -> Float
 countPercentage statsItem =
     (toFloat statsItem.enabled) / (toFloat statsItem.total) * 100
 
 
-statsTableItem : StatsItem -> Html.Html
-statsTableItem statsItem =
+
+-- VIEW
+
+
+view : Address Action -> Model -> Html.Html
+view address model =
+    div
+        []
+        [ statsTable model.stats
+        ]
+
+
+statsTable : Stats -> Html.Html
+statsTable stats =
+    table
+        []
+        [ tbody [] (List.map statsTableRow stats)
+        ]
+
+
+statsTableRow : StatsItem -> Html.Html
+statsTableRow statsItem =
     tr
         []
         [ td
@@ -94,24 +104,31 @@ statsTableItem statsItem =
         ]
 
 
-statsTable : Stats -> Html.Html
-statsTable stats =
-    table
-        []
-        [ tbody [] (List.map statsTableItem stats)
-        ]
+percentageText : Float -> Html.Html
+percentageText percentage =
+    percentage
+        |> toString
+        |> appendRight "%"
+        |> text
 
 
-view : Address Action -> Model -> Html.Html
-view address model =
-    div
-        []
-        [ statsTable model.stats
-        ]
+
+-- UPDATE
 
 
 type Action
     = ReplaceStats (Maybe Stats)
+
+
+update : Action -> Model -> ( Model, Effects Action )
+update action model =
+    case action of
+        ReplaceStats stats ->
+            ( { model | stats = (Maybe.withDefault model.stats stats) }, Effects.none )
+
+
+
+-- EFFECTS
 
 
 fetchStats : Effects Action
@@ -134,10 +151,3 @@ statsDecoder =
                 ("total" := Json.int)
     in
         Json.list statItemDecoder
-
-
-update : Action -> Model -> ( Model, Effects Action )
-update action model =
-    case action of
-        ReplaceStats stats ->
-            ( { model | stats = (Maybe.withDefault model.stats stats) }, Effects.none )
