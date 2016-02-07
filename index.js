@@ -5,9 +5,18 @@ const useragent = require('express-useragent');
 
 const app = express();
 
+const allowCrossDomain = (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    next();
+}
+
 app.set('port', (process.env.PORT || 5000));
 app.set('view engine', 'ejs');
 
+app.use(allowCrossDomain);
 app.use(bodyParser.json());
 app.use(express.static('public'));
 app.use(useragent.express());
@@ -31,13 +40,6 @@ function getStats(db, apiKey, callback) {
   }
 
   function reducer(key, values) {
-    /*
-      Each value is of format
-      {
-        enabled: 14,
-        total: 52
-      }
-     */
     return values.reduce(function(acc, value, index) {
       return {
         enabled: acc.enabled + value.enabled,
