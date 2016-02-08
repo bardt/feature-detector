@@ -73,7 +73,18 @@ appendRight str1 str2 =
 
 countPercentage : StatsItem -> Float
 countPercentage statsItem =
-    (toFloat statsItem.enabled) / (toFloat statsItem.total) * 100
+    let
+        floorToHundredth value =
+            value
+                |> (*) 100
+                |> floor
+                |> toFloat
+                |> (flip (/)) 100
+    in
+        (toFloat statsItem.enabled)
+            / (toFloat statsItem.total)
+            |> (*) 100
+            |> floorToHundredth
 
 
 searchStats : Stats -> String -> Stats
@@ -152,7 +163,7 @@ update action model =
 
 fetchStats : Effects Action
 fetchStats =
-    Http.get statsDecoder "http://localhost:5000/stats"
+    Http.get statsDecoder "/stats"
         |> Task.toMaybe
         |> Task.map ReplaceStats
         |> Effects.task
