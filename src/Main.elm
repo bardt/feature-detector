@@ -78,12 +78,13 @@ countPercentage statsItem =
 
 searchStats : Stats -> String -> Stats
 searchStats stats searchText =
-  let
-    containsText statItem =
-      String.contains searchText statItem.feature
-  in
-    stats
-    |> List.filter containsText
+    let
+        containsText statItem =
+            String.contains searchText statItem.feature
+    in
+        stats
+            |> List.filter containsText
+
 
 
 -- VIEW
@@ -92,13 +93,13 @@ searchStats stats searchText =
 view : Address Action -> Model -> Html.Html
 view address model =
     let
-      filteredStats =
-        searchStats model.stats model.searchText
+        filteredStats =
+            searchStats model.stats model.searchText
     in
-      div
-          []
-          [ statsTable filteredStats
-          ]
+        div
+            []
+            [ statsTable filteredStats
+            ]
 
 
 statsTable : Stats -> Html.Html
