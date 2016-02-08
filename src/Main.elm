@@ -156,7 +156,6 @@ fetchStats =
         |> Task.toMaybe
         |> Task.map ReplaceStats
         |> Effects.task
-        |> Debug.log "fetchStats"
 
 
 statsDecoder : Json.Decoder Stats

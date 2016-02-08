@@ -17,7 +17,11 @@
     "npm": "2.14.12"
   },
   "scripts": {
-    "postinstall": "elm-package install",
+    "postinstall": "elm-package install && npm run build",
+    "build": "npm run build:clean && mkdir ./build && npm run build:detector && npm run build:elm",
+    "build:clean": "rm -rf ./build",
+    "build:detector": "cp -r ./public/detector/ ./build/detector/",
+    "build:elm": "elm make src/Main.elm --output ./build/main.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "localmongo": "mongod --dbpath ./data"
   },

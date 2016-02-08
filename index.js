@@ -18,7 +18,7 @@ app.set('view engine', 'ejs');
 
 app.use(allowCrossDomain);
 app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(express.static('build'));
 app.use(useragent.express());
 app.use(expressMongoDb(process.env.MONGOLAB_URI || 'mongodb://localhost:27017/'));
 

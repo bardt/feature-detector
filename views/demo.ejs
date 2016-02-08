@@ -5,15 +5,9 @@
     <title>Feature Detector Demo</title>
     <script src="/detector/modernizr.js" charset="utf-8"></script>
     <script src="/detector/detector.js" charset="utf-8"></script>
+    <script src="/main.js" charset="utf-8"></script>
   </head>
   <body>
-    <table>
-      <% stats.forEach(function(statItem) { %>
-        <tr>
-          <td><%= statItem.feature %></td>
-          <td><%= statItem.percentage %>%</td>
-        </tr>
-      <% }); %>
-    </table>
+    <script type="text/javascript">Elm.fullscreen(Elm.Main)</script>
   </body>
 </html>
