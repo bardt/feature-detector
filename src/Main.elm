@@ -66,11 +66,6 @@ model =
     }
 
 
-appendRight : String -> String -> String
-appendRight str1 str2 =
-    str2 ++ str1
-
-
 countPercentage : StatsItem -> Float
 countPercentage statsItem =
     let
@@ -138,7 +133,7 @@ percentageText : Float -> Html.Html
 percentageText percentage =
     percentage
         |> toString
-        |> appendRight "%"
+        |> (flip (++)) "%"
         |> text
 
 
