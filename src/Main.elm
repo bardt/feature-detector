@@ -1,5 +1,6 @@
 module Main (..) where
 
+import String
 import Html exposing (div, table, tbody, tr, td, text)
 import StartApp
 import Signal exposing (Address)
@@ -42,7 +43,9 @@ main =
 
 
 type alias Model =
-    { stats : Stats }
+    { stats : Stats
+    , searchText : String
+    }
 
 
 type alias Stats =
@@ -58,7 +61,9 @@ type alias StatsItem =
 
 model : Model
 model =
-    { stats = [] }
+    { stats = []
+    , searchText = "work"
+    }
 
 
 appendRight : String -> String -> String
@@ -71,16 +76,29 @@ countPercentage statsItem =
     (toFloat statsItem.enabled) / (toFloat statsItem.total) * 100
 
 
+searchStats : Stats -> String -> Stats
+searchStats stats searchText =
+  let
+    containsText statItem =
+      String.contains searchText statItem.feature
+  in
+    stats
+    |> List.filter containsText
+
 
 -- VIEW
 
 
 view : Address Action -> Model -> Html.Html
 view address model =
-    div
-        []
-        [ statsTable model.stats
-        ]
+    let
+      filteredStats =
+        searchStats model.stats model.searchText
+    in
+      div
+          []
+          [ statsTable filteredStats
+          ]
 
 
 statsTable : Stats -> Html.Html
