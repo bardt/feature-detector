@@ -17,7 +17,8 @@
     "npm": "2.14.12"
   },
   "scripts": {
-    "postinstall": "elm-package install && npm run build",
+    "install:elm": "elm-package install -y",
+    "postinstall": "npm run install:elm && npm run build",
     "build": "npm run build:clean && mkdir ./build && npm run build:detector && npm run build:elm",
     "build:clean": "rm -rf ./build",
     "build:detector": "cp -r ./public/detector/ ./build/detector/",
