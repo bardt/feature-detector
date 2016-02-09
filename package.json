@@ -17,6 +17,7 @@
     "npm": "2.14.12"
   },
   "scripts": {
+    "start": "node index.js",
     "install:elm": "elm-package install -y",
     "postinstall": "npm run install:elm && npm run build",
     "build": "npm run build:clean && mkdir ./build && npm run build:detector && npm run build:elm",

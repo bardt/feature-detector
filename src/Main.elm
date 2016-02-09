@@ -1,13 +1,15 @@
 module Main (..) where
 
 import String
-import Html exposing (div, table, tbody, tr, td, text)
-import StartApp
-import Signal exposing (Address)
+import Html exposing (div, table, tbody, tr, td, text, input)
+import Html.Attributes exposing (..)
+import Html.Events exposing (on, targetValue)
 import Http
 import Json.Decode as Json exposing ((:=))
 import Task exposing (..)
+import Signal exposing (Address)
 import Effects exposing (Effects, Never)
+import StartApp
 
 
 -- APP
@@ -62,7 +64,7 @@ type alias StatsItem =
 model : Model
 model =
     { stats = []
-    , searchText = "work"
+    , searchText = ""
     }
 
 
@@ -99,13 +101,32 @@ searchStats stats searchText =
 view : Address Action -> Model -> Html.Html
 view address model =
     let
+        searchText = model.searchText
+
         filteredStats =
-            searchStats model.stats model.searchText
+            searchStats model.stats searchText
     in
         div
             []
-            [ statsTable filteredStats
+            [ searchBox address searchText
+            , statsTable filteredStats
             ]
+
+
+searchBox : Address Action -> String -> Html.Html
+searchBox address text =
+    let
+        actionMessage value =
+            value
+                |> FilterFeatures
+                |> Signal.message address
+    in
+        input
+            [ placeholder "Search features..."
+            , value text
+            , on "input" targetValue actionMessage
+            ]
+            []
 
 
 statsTable : Stats -> Html.Html
@@ -143,6 +164,7 @@ percentageText percentage =
 
 type Action
     = ReplaceStats (Maybe Stats)
+    | FilterFeatures String
 
 
 update : Action -> Model -> ( Model, Effects Action )
@@ -150,6 +172,9 @@ update action model =
     case action of
         ReplaceStats stats ->
             ( { model | stats = (Maybe.withDefault model.stats stats) }, Effects.none )
+
+        FilterFeatures text ->
+            ( { model | searchText = text }, Effects.none )
 
 
 
