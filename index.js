@@ -6,11 +6,11 @@ const useragent = require('express-useragent');
 const app = express();
 
 const allowCrossDomain = (req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    next();
+  next();
 }
 
 app.set('port', (process.env.PORT || 5000));
@@ -28,12 +28,18 @@ function getStats(db, apiKey, callback) {
     this.features.forEach(function(feature) {
       if (typeof feature.enabled === 'boolean') {
         // Simple
-        emit(feature.name, { enabled: feature.enabled ? 1 : 0, total: 1 });
+        emit(feature.name, {
+          enabled: feature.enabled ? 1 : 0,
+          total: 1
+        });
       } else {
         // Composite
         Object.keys(feature.enabled).forEach(function(subFeature) {
           const enabled = feature.enabled[subFeature];
-          emit(feature.name + '.' + subFeature, { enabled: enabled ? 1 : 0, total: 1 });
+          emit(feature.name + '.' + subFeature, {
+            enabled: enabled ? 1 : 0,
+            total: 1
+          });
         });
       }
     });
@@ -45,13 +51,20 @@ function getStats(db, apiKey, callback) {
         enabled: acc.enabled + value.enabled,
         total: acc.total + value.total
       };
-    }, { enabled: 0, total: 0 });
+    }, {
+      enabled: 0,
+      total: 0
+    });
   }
 
   const collection = db.collection('statistics');
   collection.mapReduce(mapper, reducer, {
-    query: { apiKey: apiKey },
-    out: { inline: 1 }
+    query: {
+      apiKey: apiKey
+    },
+    out: {
+      inline: 1
+    }
   }, (err, stats) => {
     if (err) {
       return callback(err, []);
@@ -86,7 +99,9 @@ app.get('/', (req, res) => {
       .filter(statItem => !!statItem.total)
       .map(addPercentage);
 
-    res.render('demo', { stats: statsView }, function(err, html) {
+    res.render('demo', {
+      stats: statsView
+    }, function(err, html) {
       res.send(html);
     });
   });
