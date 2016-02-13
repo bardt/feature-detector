@@ -18,7 +18,7 @@ view address model =
             searchStats model.stats searchText
     in
         div
-            []
+            [ class "wrapper"]
             [ searchBox address searchText
             , statsTable filteredStats
             ]
@@ -33,7 +33,8 @@ searchBox address text =
                 |> Signal.message address
     in
         input
-            [ placeholder "Search features..."
+            [ class "searchField"
+            , placeholder "Search features..."
             , value text
             , on "input" targetValue actionMessage
             ]

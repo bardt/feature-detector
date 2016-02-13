@@ -20,10 +20,11 @@
     "start": "node index.js",
     "install:elm": "elm-package install -y",
     "postinstall": "npm run install:elm && npm run build",
-    "build": "npm run build:clean && mkdir ./build && npm run build:detector && npm run build:elm",
+    "build": "npm run build:clean && mkdir ./build && npm run build:detector && npm run build:elm && npm run build:css",
     "build:clean": "rm -rf ./build",
     "build:detector": "cp -r ./public/detector/ ./build/detector/",
     "build:elm": "elm make src/Main.elm --output ./build/main.js",
+    "build:css": "cp -r ./public/css/ ./build/css/",
     "test": "echo \"Error: no test specified\" && exit 1",
     "localmongo": "mongod --dbpath ./data"
   },
