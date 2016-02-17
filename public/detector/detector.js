@@ -1,18 +1,20 @@
-(function() {
+(function(Modernizr) {
   function getFeatures() {
+    if (typeof Modernizr === 'undefined') return;
+
+    function isBlackListed(key) {
+      return !Modernizr.hasOwnProperty(key) ||
+        key.toString()[0] === '_' ||
+        typeof Modernizr[key] === 'function';
+    }
+
     var features = [];
-    if (typeof Modernizr !== 'undefined') {
-      for (key in Modernizr) {
-        if (Modernizr.hasOwnProperty(key)) {
-          if (key.toString()[0] !== '_') {
-            if (typeof Modernizr[key] !== 'function') {
-              features.push({
-                name: key,
-                enabled: Modernizr[key]
-              });
-            }
-          }
-        }
+    for (key in Modernizr) {
+      if (!isBlackListed(key)) {
+        features.push({
+          name: key,
+          enabled: Modernizr[key]
+        });
       }
     }
     return features;
@@ -37,4 +39,4 @@
   }
 
   sendStats(getFeatures());
-})();
+})(window.Modernizr);
