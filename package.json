@@ -9,7 +9,8 @@
     "elm": "^0.16.0",
     "express": "^4.13.3",
     "express-mongo-db": "^2.0.3",
-    "express-useragent": "^0.2.4"
+    "express-useragent": "^0.2.4",
+    "modernizr": "^3.3.1"
   },
   "devDependencies": {},
   "engines": {
@@ -20,9 +21,10 @@
     "start": "node index.js",
     "install:elm": "elm-package install -y",
     "postinstall": "npm run install:elm && npm run build",
-    "build": "npm run build:clean && mkdir ./build && npm run build:detector && npm run build:elm && npm run build:css",
+    "build": "npm run build:clean && mkdir ./build && npm run build:modernizr && npm run build:public && npm run build:elm && npm run build:css",
     "build:clean": "rm -rf ./build",
-    "build:detector": "cp -r ./public/detector/ ./build/detector/",
+    "build:modernizr": "modernizr -c node_modules/modernizr/lib/config-all.json -d ./build/modernizr.js",
+    "build:public": "cp -r ./public/ ./build/",
     "build:elm": "elm make src/Main.elm --output ./build/main.js",
     "build:css": "cp -r ./public/css/ ./build/css/",
     "test": "echo \"Error: no test specified\" && exit 1",
