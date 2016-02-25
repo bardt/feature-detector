@@ -23,7 +23,7 @@
     "postinstall": "npm run install:elm && npm run build",
     "build": "npm run build:clean && mkdir ./build && npm run build:modernizr && npm run build:public && npm run build:elm && npm run build:css",
     "build:clean": "rm -rf ./build",
-    "build:modernizr": "modernizr -c node_modules/modernizr/lib/config-all.json -d ./build/modernizr.js",
+    "build:modernizr": "modernizr -c config/modernizr.json -d ./build/modernizr.js -u",
     "build:public": "cp -r ./public/ ./build/",
     "build:elm": "elm make src/Main.elm --output ./build/main.js",
     "build:css": "cp -r ./public/css/ ./build/css/",
