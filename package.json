@@ -24,7 +24,7 @@
     "build": "npm run build:clean && mkdir ./build && npm run build:detector && npm run build:app",
     "build:clean": "rm -rf ./build",
     "build:modernizr": "modernizr -c config/modernizr.json -d ./build/modernizr.js -u",
-    "build:detector": "npm run build:modernizr && cp -r ./public/detector.js ./build/detector.js",
+    "build:detector": "npm run build:modernizr && cat ./build/modernizr.js >> ./build/detector.js &&  cat ./public/detector.js >> ./build/detector.js",
     "build:elm": "elm make src/Main.elm --output ./build/main.js",
     "build:css": "cp -r ./public/css/ ./build/css/",
     "build:app": "npm run build:elm && npm run build:css",
